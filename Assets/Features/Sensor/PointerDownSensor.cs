@@ -1,17 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.EventSystems;
+using System;
+using R3;
+using R3.Triggers;
 
-public class PointerDownSensor : Sensor, IPointerDownHandler
+
+public class PointerDownSensor : Sensor
 {
-    // Interface IPointerDownHandler requires OnPointerDown(PointerEventData) function
-    public void OnPointerDown(PointerEventData pointerEventData)
+    private void Awake()
     {
-        // SensorEventArgs object with the PointerEventData as parameter. (This is used for the explosions.)
-        SensorEventArgs eventArgs = new SensorEventArgs(pointerEventData);
-        
-        // Raises Sensor Triggered event with pointerEventData -> special information
-        OnSensorTriggered(eventArgs);
+        SensorTriggered = this.gameObject.AddComponent<ObservablePointerDownTrigger>()
+            .OnPointerDownAsObservable()
+            .Select(e => new SensorEventArgs(e) as EventArgs);
     }
 }

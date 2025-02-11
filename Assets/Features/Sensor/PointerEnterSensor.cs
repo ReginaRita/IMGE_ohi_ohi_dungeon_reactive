@@ -1,15 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using R3;
+using R3.Triggers;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class PointerEnterSensor : Sensor, IPointerEnterHandler
+public class PointerEnterSensor : Sensor
 {
-    public void OnPointerEnter(PointerEventData eventData)
+    private void Awake()
     {
-        SensorEventArgs eventArgs = new SensorEventArgs(eventData);
-        
-        //  raise the SensorTriggered event whenever a PointerEnter event occurs.
-        OnSensorTriggered(eventArgs);
+        SensorTriggered = this.gameObject.AddComponent<ObservablePointerEnterTrigger>()
+            .OnPointerEnterAsObservable()
+            .Select(e => new SensorEventArgs(e) as EventArgs);
     }
 }

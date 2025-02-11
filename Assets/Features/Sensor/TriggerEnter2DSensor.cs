@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using System;
+using R3;
+using R3.Triggers;
 
 public class TriggerEnter2DSensor : Sensor // inherits from abstract class Sensor
 {
-    public void OnTriggerEnter2D(Collider2D other)
+    private void Awake()
     {
-        //Debug.Log($"TriggerEnter2D detected on: {gameObject.name}, collided with: {other.gameObject.name}");
-        
-        OnSensorTriggered(EventArgs.Empty);
+        SensorTriggered = this.gameObject.AddComponent<ObservableTrigger2DTrigger>()
+            .OnTriggerEnter2DAsObservable()
+            .Select(e => EventArgs.Empty);
     }
 }
