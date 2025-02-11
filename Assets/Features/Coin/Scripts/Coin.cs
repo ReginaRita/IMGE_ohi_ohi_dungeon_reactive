@@ -14,43 +14,27 @@ public class Coin : MonoBehaviour
     {
         animationController.PlaySpawnAnimation();
     }
-    
-    private void OnEnable()
+
+    private void Start()
     {
         if (_sensor != null)
         {
-            //Debug.Log("PlayerTap: Subscribing to SensorTriggered.");
-            // Referenziere Methode CollectSignalDetected -> muss nicht Parameter einfügen
-            _sensor.SensorTriggered += CollectSignalDetected;  // fügt die Methode CollectSignalDetected zur Liste der Methoden hinzu, die bei diesem Event ausgeführt werden
+            _sensor.SensorTriggered
+                .Subscribe(CollectSignalDetected)
+                .AddTo(this);
         }
         else
         {
-            //Debug.LogError("PlayerTap: Sensor is NULL! Make sure the GameObject has a Sensor component.");
-        }
-    }
-    
-    private void OnDisable()
-    {
-        if (_sensor != null)
-        {
-            //Debug.Log("PlayerTap: Unsubscribing from SensorTriggered.");
-            // Dereferenziere Methode CollectSignalDetected
-            _sensor.SensorTriggered -= CollectSignalDetected;   // entfehrnt die Methode CollectSignalDetected aus Liste der Methoden hinzu, die bei diesem Event ausgeführt werden
+            Debug.LogError("PlayerTap: Sensor is NULL! Make sure the GameObject has a Sensor component.");
         }
     }
 
-    public void CollectSignalDetected(object sender, EventArgs args)
+    public void CollectSignalDetected(EventArgs args)
     {
         // Call Collect
         Collect();
         
         gameObject.SetActive(false); // deactivates the GameObject of the referenced Sensor componen
-
-        if (_sensor != null)
-        {   
-            // Unsubscribe from the event after collecting the coin -> coin is already collected/can't be collected twice
-            _sensor.SensorTriggered -= CollectSignalDetected;
-        }
     }
     
     public void Collect()

@@ -1,4 +1,5 @@
 using System;
+using R3;
 using UnityEngine;
 
 public class PlayerTap : DamageCause
@@ -17,32 +18,21 @@ public class PlayerTap : DamageCause
         _camera = Camera.main;
     }
 
-    private void OnEnable()
+    private void Start()
     {
         if (_sensor != null)
         {
-            //Debug.Log("PlayerTap: Subscribing to SensorTriggered.");
-            // Referenziere Methode DamageCauseSignalDetected -> muss nicht Parameter einfügen
-            _sensor.SensorTriggered += DamageCauseSignalDetected;  // fügt die Methode DamageCauseSignalDetected zur Liste der Methoden hinzu, die bei diesem Event ausgeführt werden
+            _sensor.SensorTriggered
+                .Subscribe(DamageCauseSignalDetected)
+                .AddTo(this);
         }
         else
         {
-            //Debug.LogError("PlayerTap: Sensor is NULL! Make sure the GameObject has a Sensor component.");
+            Debug.LogError("PlayerTap: Sensor is NULL! Make sure the GameObject has a Sensor component.");
         }
     }
     
-
-    private void OnDisable()
-    {
-        if (_sensor != null)
-        {
-            //Debug.Log("PlayerTap: Unsubscribing from SensorTriggered.");
-            // Dereferenziere Methode DamageCauseSignalDetected
-            _sensor.SensorTriggered -= DamageCauseSignalDetected;   // entfehrnt die Methode DamageCauseSignalDetected aus Liste der Methoden hinzu, die bei diesem Event ausgeführt werden
-        }
-    }
-
-    public void DamageCauseSignalDetected(object sender, EventArgs args)
+    public void DamageCauseSignalDetected(EventArgs args)
     {
         damageEffect.Trigger(this);
         
