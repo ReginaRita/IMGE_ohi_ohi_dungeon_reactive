@@ -12,28 +12,14 @@ public class GameData : SingletonMonoBehaviour<GameData>
         Undeads,
         Orcs
     }
-
-    private int _score; // Can be modified by Score get() and set()
-    public static int LastScore;
     
+    public static int LastScore;
+    public ReactiveProperty<int> Score = new ReactiveProperty<int>(0);
     
     // Event, das ausgelöst wird, wenn der Score aktualisiert wird
     public event EventHandler<ScoreUpdatedEventArgs> ScoreUpdated;
     
-    // Implement a get/set construct for the score property to react to changes.
-    public int Score
-    {
-        get => _score; 
-        set
-        {
-            if (_score != value) // Nur wenn der Wert geändert wird
-            {
-                _score = value;
-                // Event auslösen, wenn der Score geändert wird
-                ScoreUpdated?.Invoke(this, new ScoreUpdatedEventArgs(_score));
-            }
-        }
-    }
+    
     public ReactiveProperty<bool> abilityAvailable = new ReactiveProperty<bool>(false);
    
     [HideInInspector] public LevelTheme currentLevelTheme;
@@ -46,12 +32,12 @@ public class GameData : SingletonMonoBehaviour<GameData>
 
     public void IncreaseScore(int value)
     {
-        Score += value; // löst das Event aus (set)
+        Score.Value += value; // löst das Event aus (set)
     }
 
     public void ResetScore()
     {
-        Score = 0; // löst das Event aus (set)
+        Score.Value = 0; // löst das Event aus (set)
     }
 
     public void SetAbilityAvailable(bool value)
@@ -88,6 +74,6 @@ public class GameData : SingletonMonoBehaviour<GameData>
 
     public void SaveScoreForGameOver()
     {
-        LastScore = Score;
+        LastScore = Score.Value;
     }
 }
